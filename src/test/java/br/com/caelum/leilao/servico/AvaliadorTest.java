@@ -32,16 +32,145 @@ public class AvaliadorTest {
         Avaliador leiloeiro = new Avaliador();
         leiloeiro.avalia(leilao);
 
-        double maiorEsperado = 400;
-        double menorEsperado = 250;
-
         // parte 3: validacao
-        assertEquals(maiorEsperado, leiloeiro.getMaiorLance(), 0.00001);
-        assertEquals(menorEsperado, leiloeiro.getMenorLance(), 0.00001);
+        assertEquals(400, leiloeiro.getMaiorLance(), 0.00001);
+        assertEquals(250, leiloeiro.getMenorLance(), 0.00001);
     }
 
     @Test
-    public void getMediaDosLances() {
+    public void deveEntenderLeilaoComApenasUmLance() {
+        Usuario joao = new Usuario("João");
+
+        Leilao leilao = new Leilao("Playstation 5 Novo");
+
+        leilao.propoe(new Lance(joao, 1000.0));
+
+        Avaliador avaliador = new Avaliador();
+        avaliador.avalia(leilao);
+
+        assertEquals(1000, avaliador.getMaiorLance(), 0.00001);
+        assertEquals(1000, avaliador.getMenorLance(), 0.00001);
+        assertEquals(1000, avaliador.getMedia(), 0.00001);
+    }
+
+    @Test
+    public void deveEncontrarOsTresMaioresLances() {
+        Usuario joao = new Usuario("João");
+        Usuario maria = new Usuario("Maria");
+
+        Leilao leilao = new Leilao("Playstation 5 Novo");
+
+        leilao.propoe(new Lance(joao, 100.0));
+        leilao.propoe(new Lance(maria, 200.0));
+        leilao.propoe(new Lance(joao, 300.0));
+        leilao.propoe(new Lance(maria, 400.0));
+
+        Avaliador avaliador = new Avaliador();
+        avaliador.avalia(leilao);
+
+        List<Lance> tresMaiores = avaliador.getTresMaiores();
+
+        assertEquals(3, tresMaiores.size());
+        assertEquals(400, tresMaiores.get(0).getValor(), 0.00001);
+        assertEquals(300, tresMaiores.get(1).getValor(), 0.00001);
+        assertEquals(200, tresMaiores.get(2).getValor(), 0.00001);
+    }
+
+    @Test
+    public void testeLeilaoComValoresRandomicos() {
+        Usuario joao = new Usuario("João");
+        Usuario maria = new Usuario("Maria");
+        Usuario jose = new Usuario("José");
+
+        Leilao leilao = new Leilao("Playstation 5 Novo");
+
+        leilao.propoe(new Lance(joao, 200.0));
+        leilao.propoe(new Lance(maria, 450.0));
+        leilao.propoe(new Lance(jose, 120.0));
+        leilao.propoe(new Lance(joao, 700.0));
+        leilao.propoe(new Lance(maria, 630.0));
+        leilao.propoe(new Lance(jose, 230.0));
+
+        Avaliador avaliador = new Avaliador();
+        avaliador.avalia(leilao);
+
+        assertEquals(700, avaliador.getMaiorLance(), 0.00001);
+        assertEquals(120, avaliador.getMenorLance(), 0.00001);
+    }
+
+    @Test
+    public void testaLeilaoComValoresDecrecentes() {
+        Usuario joao = new Usuario("João");
+        Usuario maria = new Usuario("Maria");
+        Usuario jose = new Usuario("José");
+
+        Leilao leilao = new Leilao("Playstation 5 Novo");
+
+        leilao.propoe(new Lance(joao, 400.0));
+        leilao.propoe(new Lance(maria, 300.0));
+        leilao.propoe(new Lance(jose, 200.0));
+        leilao.propoe(new Lance(joao, 100.0));
+
+        Avaliador avaliador = new Avaliador();
+        avaliador.avalia(leilao);
+
+        assertEquals(400.0, avaliador.getMaiorLance(), 0.00001);
+        assertEquals(100.0, avaliador.getMenorLance(), 0.00001);
+    }
+
+    @Test
+    public void leilaoComCincoLancesDeveEncontrarTresMaiores() {
+        Usuario joao = new Usuario("João");
+        Usuario maria = new Usuario("Maria");
+        Usuario jose = new Usuario("José");
+
+        Leilao leilao = new Leilao("Playstation 5 Novo");
+
+        leilao.propoe(new Lance(joao, 400.0));
+        leilao.propoe(new Lance(maria, 300.0));
+        leilao.propoe(new Lance(jose, 200.0));
+        leilao.propoe(new Lance(joao, 100.0));
+        leilao.propoe(new Lance(joao, 140.0));
+
+        Avaliador avaliador = new Avaliador();
+        avaliador.avalia(leilao);
+
+        assertEquals(3, avaliador.getTresMaiores().size());
+        assertEquals(400, avaliador.getTresMaiores().get(0).getValor(), 0.00001);
+        assertEquals(300, avaliador.getTresMaiores().get(1).getValor(), 0.00001);
+        assertEquals(200, avaliador.getTresMaiores().get(2).getValor(), 0.00001);
+    }
+
+    @Test
+    public void leilaoComDoisLancesDeveEncontrarDoisMaiores() {
+        Usuario joao = new Usuario("João");
+        Usuario maria = new Usuario("Maria");
+
+        Leilao leilao = new Leilao("Playstation 5 Novo");
+
+        leilao.propoe(new Lance(joao, 400.0));
+        leilao.propoe(new Lance(maria, 300.0));
+
+        Avaliador avaliador = new Avaliador();
+        avaliador.avalia(leilao);
+
+        assertEquals(2, avaliador.getTresMaiores().size());
+        assertEquals(400, avaliador.getTresMaiores().get(0).getValor(), 0.00001);
+        assertEquals(300, avaliador.getTresMaiores().get(1).getValor(), 0.00001);
+    }
+
+    @Test
+    public void leilaoSemLanceDeveDevolverListaVazia() {
+        Leilao leilao = new Leilao("Playstation 5 Novo");
+
+        Avaliador avaliador = new Avaliador();
+        avaliador.avalia(leilao);
+
+        assertEquals(0, avaliador.getTresMaiores().size());
+    }
+
+    @Test
+    public void calculaMediaLances() {
         Usuario joao = new Usuario("João");
         Usuario jose = new Usuario("José");
         Usuario maria = new Usuario("Maria");

@@ -28,5 +28,6 @@ public class TesteDoAvaliador {
         System.out.println(leiloeiro.getMaiorLance());
         System.out.println(leiloeiro.getMenorLance());
         System.out.println(leiloeiro.getMedia());
+        System.out.println(leiloeiro.getTresMaiores());
     }
 }
