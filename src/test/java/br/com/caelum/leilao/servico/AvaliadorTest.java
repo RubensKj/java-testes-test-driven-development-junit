@@ -8,6 +8,7 @@ import org.junit.*;
 
 import java.util.List;
 
+import static br.com.caelum.leilao.matcher.LeilaoMatcher.temUmLance;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -69,10 +70,13 @@ public class AvaliadorTest {
     public void deveEntenderLeilaoComApenasUmLance() {
         Leilao leilao = new Leilao("Playstation 5 Novo");
 
-        leilao.propoe(new Lance(joao, 1000.0));
+        Lance lance = new Lance(joao, 1000.0);
+
+        leilao.propoe(lance);
 
         leiloeiro.avalia(leilao);
 
+        assertThat(leilao, temUmLance(lance));
         assertEquals(1000, leiloeiro.getMaiorLance(), 0.00001);
         assertEquals(1000, leiloeiro.getMenorLance(), 0.00001);
         assertEquals(1000, leiloeiro.getMedia(), 0.00001);
