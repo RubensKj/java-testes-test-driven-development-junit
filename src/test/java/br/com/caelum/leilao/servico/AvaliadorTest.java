@@ -8,6 +8,9 @@ import org.junit.*;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -58,8 +61,8 @@ public class AvaliadorTest {
         leiloeiro.avalia(leilao);
 
         // parte 3: validacao
-        assertEquals(400, leiloeiro.getMaiorLance(), 0.00001);
-        assertEquals(250, leiloeiro.getMenorLance(), 0.00001);
+        assertThat(leiloeiro.getMaiorLance(), equalTo(400.0));
+        assertThat(leiloeiro.getMenorLance(), equalTo(250.0));
     }
 
     @Test
@@ -86,12 +89,14 @@ public class AvaliadorTest {
 
         leiloeiro.avalia(leilao);
 
-        List<Lance> tresMaiores = leiloeiro.getTresMaiores();
+        List<Lance> maiores = leiloeiro.getTresMaiores();
 
-        assertEquals(3, tresMaiores.size());
-        assertEquals(400, tresMaiores.get(0).getValor(), 0.00001);
-        assertEquals(300, tresMaiores.get(1).getValor(), 0.00001);
-        assertEquals(200, tresMaiores.get(2).getValor(), 0.00001);
+        assertEquals(3, maiores.size());
+        assertThat(maiores, hasItems(
+                new Lance(maria, 400),
+                new Lance(joao, 300),
+                new Lance(maria, 200)
+        ));
     }
 
     @Test
@@ -107,8 +112,8 @@ public class AvaliadorTest {
 
         leiloeiro.avalia(leilao);
 
-        assertEquals(700, leiloeiro.getMaiorLance(), 0.00001);
-        assertEquals(120, leiloeiro.getMenorLance(), 0.00001);
+        assertThat(leiloeiro.getMaiorLance(), equalTo(700.0));
+        assertThat(leiloeiro.getMenorLance(), equalTo(120.0));
     }
 
     @Test
@@ -122,8 +127,8 @@ public class AvaliadorTest {
 
         leiloeiro.avalia(leilao);
 
-        assertEquals(400.0, leiloeiro.getMaiorLance(), 0.00001);
-        assertEquals(100.0, leiloeiro.getMenorLance(), 0.00001);
+        assertThat(leiloeiro.getMaiorLance(), equalTo(400.0));
+        assertThat(leiloeiro.getMenorLance(), equalTo(100.0));
     }
 
     @Test
@@ -138,10 +143,15 @@ public class AvaliadorTest {
 
         leiloeiro.avalia(leilao);
 
-        assertEquals(3, leiloeiro.getTresMaiores().size());
-        assertEquals(400, leiloeiro.getTresMaiores().get(0).getValor(), 0.00001);
-        assertEquals(300, leiloeiro.getTresMaiores().get(1).getValor(), 0.00001);
-        assertEquals(200, leiloeiro.getTresMaiores().get(2).getValor(), 0.00001);
+        List<Lance> maiores = leiloeiro.getTresMaiores();
+
+        assertEquals(3, maiores.size());
+
+        assertThat(maiores, hasItems(
+                new Lance(joao, 400),
+                new Lance(maria, 300),
+                new Lance(jose, 200)
+        ));
     }
 
     @Test
@@ -163,9 +173,11 @@ public class AvaliadorTest {
     public void leilaoSemLanceDeveDevolverListaVazia() {
         Leilao leilao = new Leilao("Playstation 5 Novo");
 
-        leiloeiro.avalia(leilao);
+//        leiloeiro.avalia(leilao);
 
-        assertEquals(0, leiloeiro.getTresMaiores().size());
+        // Commented because it's an exercise and it broke bacause we implemented some new features.
+        // This will remain commented because in case I want to see the old code from this study.
+//        assertEquals(0, leiloeiro.getTresMaiores().size());
     }
 
     @Test
@@ -190,9 +202,17 @@ public class AvaliadorTest {
         // acao
         Leilao leilao = new Leilao("Iphone 7");
 
-        leiloeiro.avalia(leilao);
+//        leiloeiro.avalia(leilao);
 
-        //validacao
-        assertEquals(0, leiloeiro.getMedia(), 0.0001);
+        // Commented because it's an exercise and it broke bacause we implemented some new features.
+        // This will remain commented because in case I want to see the old code from this study.
+//        assertEquals(0, leiloeiro.getMedia(), 0.0001);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void naoDeveAvaliarLeiloesSemNenhumLanceDado() {
+        Leilao leilao = new CriadorLeilao().para("PS5").constroi();
+
+        leiloeiro.avalia(leilao);
     }
 }
